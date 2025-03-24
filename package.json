@@ -1,5 +1,5 @@
 {
-  "name": "my-turborepo",
+  "name": "multisport",
   "private": true,
   "scripts": {
     "build": "turbo run build",
