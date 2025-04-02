@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const infoRegistertype = z.object({
+export const basicOnboardingInfo = z.object({
     firstname: z.string(),
     lastname : z.string(),
     username: z.string(),
