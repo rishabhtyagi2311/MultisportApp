@@ -7,6 +7,7 @@ export  const router = Router()
 router.post("/basicInfo", async(req, res) => {
     
     const parsedData = basicOnboardingInfo.safeParse(req.body)
+
     if(!parsedData.success)
     {
         res.status(400).json({message:"Invalid data format"})

@@ -4,6 +4,8 @@ import {router as onboardingRouter} from "./routers/onboardingRouter"
 
 const app =  express()
 
+app.use(express.json())
+
 app.use("/api/v1/onboarding", onboardingRouter)
 
 
