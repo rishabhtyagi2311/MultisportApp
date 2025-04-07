@@ -5,6 +5,8 @@ import { basicOnboardingInfo } from "../types";
 export  const router = Router()
 
 router.post("/basicInfo", async(req, res) => {
+    console.log("request arrived");
+    
     
     const parsedData = basicOnboardingInfo.safeParse(req.body)
 
@@ -38,7 +40,9 @@ router.post("/basicInfo", async(req, res) => {
         })
         if(newUser)
         {
-            res.status(200).json(newUser)
+            res.status(200).json({id: newUser.id, firstname: newUser.firstname, lastname: newUser.lastname,
+                username : newUser.username
+            })
             return
         }
         res.status(400).json({message : "Cannot create new user"})

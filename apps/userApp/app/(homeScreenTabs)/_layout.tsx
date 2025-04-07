@@ -1,17 +1,32 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
+import { Tabs } from 'expo-router';
+import { Text, View } from 'react-native';
 
-import { Ionicons } from "@expo/vector-icons"; // For icons
-import { View } from "react-native";
-
-const Tab = createBottomTabNavigator();
-
- export default function RootBarLayout() {
+export default function TabLayout() {
+  console.log("Rendering TabLayout");
   return (
-  
-     <View>
-        hello 
-     </View>
-
+    <>
+      
+      <Tabs initialRouteName='index'>
+      <Tabs.Screen
+          name="sports"
+          options={{
+            title: "Sports",
+          }}
+        />
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "Home",
+          }}
+        />
+         <Tabs.Screen
+          name="book"
+          options={{
+            title: "Book",
+          }}
+        />
+       
+      </Tabs>
+    </>
   );
 }
