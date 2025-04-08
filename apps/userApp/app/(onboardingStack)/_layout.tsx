@@ -1,7 +1,5 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import InfoRegisterScreen from './basicInfoRegister';
-import { BlurView } from 'expo-blur';
-import { StyleSheet } from "react-native";
 
 
 const Stack = createStackNavigator();

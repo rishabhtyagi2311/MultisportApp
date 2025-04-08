@@ -82,11 +82,12 @@ export default function InfoRegisterScreen() {
     });
 
     console.log(response);
-    if(response) 
+    if(response?.data.id) 
       {
         await AsyncStorage.setItem("user_id", (response.data.id).toString() )
+        router.replace('../(homeScreenTabs)')
       }
-    router.replace('../(homeScreenTabs)')
+ 
   
   };
 

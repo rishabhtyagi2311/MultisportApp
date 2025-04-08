@@ -12,4 +12,11 @@ export const basicOnboardingInfo = z.object({
 
 })
 
+export const footballProfileRegister = z.object({
+    userId : z.number(),
+    role : z.string(),
+    experience : z.string(),
+    nickname: z.string()
+})
+
 

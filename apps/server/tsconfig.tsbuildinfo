@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/routers/onboardingrouter.ts","./src/types/index.ts"],"version":"5.8.2"}
+{"root":["./src/index.ts","./src/routers/footballrouter.ts","./src/routers/onboardingrouter.ts","./src/types/index.ts"],"version":"5.8.2"}
