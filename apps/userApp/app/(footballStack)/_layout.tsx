@@ -13,8 +13,9 @@ export default function FootballStackLayout() {
         headerTitle: 'Football',
       }}
     >
+      <Stack.Screen name ="index" options={{headerShown : false}}/>
       <Stack.Screen
-        name="index"
+        name="main"
         options={{
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.replace('/(homeScreenTabs)/sports')}>

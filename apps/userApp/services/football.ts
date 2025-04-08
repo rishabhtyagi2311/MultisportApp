@@ -15,15 +15,31 @@ interface FootballProfileData {
 }
 
 class FootballService {
-  async profileRegister(data: FootballProfileData) {
-    try {
-      const response = await axios.post(`${backendUrl}/api/v1/football/profileRegister`, data);
-      return response?.data ?? null;
-    } catch (e) {
-      console.error("Error in profileRegister:", e);
-      return null;
+  
+    async profileRegister(data: FootballProfileData) {
+      try {
+        const response = await axios.post(`${backendUrl}/api/v1/football/profileRegister`, data);
+        return response?.data ?? null;
+      } catch (e) {
+        console.error("Error in profileRegister:", e);
+        return null;
+      }
     }
-  }
+    
+    async profileCheck(userId: number)
+    {
+        try{
+          const response = await axios.get(`${backendUrl}/api/v1/football/profileCheck/${userId}`)
+          return response?.data ?? null;
+        }
+        catch(e)
+        {
+          console.error("Error in profile check:", e);
+          return null;
+        }
+    }
+
+
 }
 
 export const footballService = new FootballService();

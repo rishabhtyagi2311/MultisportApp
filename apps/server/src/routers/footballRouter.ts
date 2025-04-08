@@ -47,3 +47,36 @@ router.post("/profileRegister", async(req, res) => {
         return 
     }
 })
+
+
+router.get("/profileCheck/:id" , async(req, res) => {
+    
+    const id = parseInt(req.params.id); 
+
+    if (isNaN(id)) {
+        res.status(400).json({ message: "Invalid user ID" });
+        return 
+    }
+
+    try {
+        const userExist = await client.footballProfile.findUnique({
+            where: {
+            userId: id,
+            },
+        });
+
+        if (userExist) {
+            res.status(200).json(userExist);
+            return 
+        } else {
+            res.status(404).json({ message: "User not found" });
+            return 
+        }
+    } 
+    catch (err) 
+    {
+        console.error("Error checking user profile:", err);
+        res.status(500).json({ message: "Internal Server Error" });
+        return 
+    }
+})
