@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,26 +7,60 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model userInfo {
+  id          Int             @id @default(autoincrement())
+  firstname   String
+  lastname    String
+  username    String          @unique
+  age         Int
+  city        String
+  email       String
 
+  footballProfile footballProfile?
 
-model UserInfo {
-  id              Int               @id @default(autoincrement())
-  firstname       String
-  lastname        String
-  username        String           @unique
-  age             Int
-  city            String
-  email           String
-
-  footballProfile FootballProfile? 
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
 }
 
-model FootballProfile {
-  id       Int      @id @default(autoincrement())
-  userId   Int      @unique
-  nickname String
-  role     String
+model footballProfile {
+  id         Int         @id @default(autoincrement())
+  userId     Int         @unique
+  nickname   String
+  role       String
   experience String
 
-  user     UserInfo @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       userInfo    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdTeams footballTeam[] @relation("CreatedTeams")
+  memberTeams  footballTeamMember[]
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model footballTeam {
+  id          Int                   @id @default(autoincrement())
+  name        String
+  location    String
+  maxPlayers  Int
+  createdById Int
+
+  createdBy   footballProfile       @relation("CreatedTeams", fields: [createdById], references: [id])
+  members     footballTeamMember[]
+
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+}
+
+model footballTeamMember {
+  id               Int               @id @default(autoincrement())
+  footballProfileId Int
+  footballTeamId   Int
+
+  footballProfile  footballProfile   @relation(fields: [footballProfileId], references: [id])
+  footballTeam     footballTeam      @relation(fields: [footballTeamId], references: [id])
+
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@unique([footballProfileId, footballTeamId])
 }

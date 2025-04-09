@@ -1,5 +1,5 @@
 import e, { Router } from "express";
-import { footballProfileRegister } from "../types";
+import { footballProfileRegister, footballTeamCreate } from "../types";
 import client from "@multisport/db/client"
 
 export const router  =Router()
@@ -50,8 +50,12 @@ router.post("/profileRegister", async(req, res) => {
 
 
 router.get("/profileCheck/:id" , async(req, res) => {
+
+  
     
     const id = parseInt(req.params.id); 
+    console.log(id);
+    
 
     if (isNaN(id)) {
         res.status(400).json({ message: "Invalid user ID" });
@@ -64,12 +68,15 @@ router.get("/profileCheck/:id" , async(req, res) => {
             userId: id,
             },
         });
-
+        console.log(userExist);
+        
         if (userExist) {
-            res.status(200).json(userExist);
+            res.status(200).json({check : true , userDetails : userExist});
             return 
         } else {
-            res.status(404).json({ message: "User not found" });
+            console.log("check negative ");
+            
+            res.status(200).json({ check: false });
             return 
         }
     } 
@@ -80,3 +87,86 @@ router.get("/profileCheck/:id" , async(req, res) => {
         return 
     }
 })
+
+router.post("/createTeam", async (req, res) => {
+    const parsed = footballTeamCreate.safeParse(req.body);
+  
+    if (!parsed.success) {
+        res.status(400).json({ message: "Invalid team data", errors: parsed.error.errors });
+        return 
+    }
+  
+    const { createdByUserId, name, location, maxPlayers, playerIds } = parsed.data;
+  
+    try {
+        
+        const team = await client.footballTeam.create({
+            data:{
+                name,
+                location,
+                maxPlayers,
+                createdById : createdByUserId
+            }
+        })
+  
+      // Add members step-by-step
+      await client.footballTeamMember.createMany({
+        data: playerIds.map((id) => ({
+          footballProfileId: id,
+          footballTeamId: team.id,
+        })),
+      });
+  
+      // Final fetch with all relations
+      const fullTeam = await client.footballTeam.findUnique({
+        where: { id: team.id },
+        include: {
+          members: {
+            include: {
+              footballProfile: {
+                include: {
+                  user: true,
+                },
+              },
+            },
+          },
+          createdBy: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      });
+  
+      res.status(200).json({ message: "Team created successfully", team: fullTeam });
+      return 
+    } catch (err) {
+      console.error("Error creating team:", err);
+      res.status(500).json({ message: "Internal Server Error" });
+      return 
+    }
+  });
+  
+
+router.get('/fetchPlayers', async (req, res) => {
+    try {
+      const players = await client.footballProfile.findMany({
+        select: {
+          id: true,
+          userId: true,
+          nickname: true,
+          role: true,
+          experience: true,
+        },
+      });
+  
+      res.json({ success: true, players });
+      return 
+    } catch (error) {
+      console.error('Error fetching football players:', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+      return 
+    }
+  });
+  
+  

@@ -22,7 +22,7 @@ export default function FootballEntryScreen() {
           const res = await footballService.profileCheck(id)
         console.log(res);
         
-          if (res.id) {
+          if (res?.check ) {
             console.log("true in check");
             
     

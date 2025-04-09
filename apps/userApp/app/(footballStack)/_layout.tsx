@@ -27,8 +27,15 @@ export default function FootballStackLayout() {
       <Stack.Screen
       name = "optionsScreen"
       options={{
-        headerShown: true
+        headerShown: true,
+        headerLeft: () => (
+          <TouchableOpacity onPress={() => router.replace('/(homeScreenTabs)/sports')}>
+            <Ionicons name="arrow-back" size={24} color="#f8fafc" style={{ marginLeft: 16 }} />
+          </TouchableOpacity>
+        ),
       }}
+      
+
       />
     </Stack>
   );

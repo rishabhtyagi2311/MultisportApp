@@ -14,6 +14,14 @@ interface FootballProfileData {
   experience: string;
 }
 
+interface CreateTeamPayload {
+  name: string;
+  location: string;
+  maxPlayers: number;
+  createdByUserId: number;
+  playerIds: number[];
+}
+
 class FootballService {
   
     async profileRegister(data: FootballProfileData) {
@@ -30,6 +38,8 @@ class FootballService {
     {
         try{
           const response = await axios.get(`${backendUrl}/api/v1/football/profileCheck/${userId}`)
+          console.log(response);
+          
           return response?.data ?? null;
         }
         catch(e)
@@ -38,7 +48,25 @@ class FootballService {
           return null;
         }
     }
+    async createTeam(payload: CreateTeamPayload) {
+      try {
+        const response = await axios.post(`${backendUrl}/api/v1/football/createTeam`, payload);
+        return response?.data ?? null;
+      } catch (e) {
+        console.error("Error in createTeam:", e);
+        return null;
+      }
+    }
 
+    async fetchAllPlayers() {
+      try {
+        const response = await axios.get(`${backendUrl}/api/v1/football/fetchPlayers`);
+        return response?.data?.players ?? [];
+      } catch (e) {
+        console.error("Error in fetchAllPlayers:", e);
+        return [];
+      }
+    }
 
 }
 

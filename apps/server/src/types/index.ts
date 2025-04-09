@@ -20,3 +20,10 @@ export const footballProfileRegister = z.object({
 })
 
 
+export const footballTeamCreate = z.object({
+    name: z.string(),
+    location: z.string(),
+    createdByUserId: z.number(),
+    maxPlayers : z.number(),
+    playerIds: z.array(z.number())
+})

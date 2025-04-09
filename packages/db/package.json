@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "exports": {
-    "./client" : "./dist/index.js"
+    "./client": "./dist/index.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build" : "tsc -b"
+  
+    "seed": "ts-node prisma/seed.ts",
+    "build": "tsc -b"
   },
   "keywords": [],
   "author": "",
@@ -16,5 +17,9 @@
   "dependencies": {
     "@prisma/client": "^6.5.0",
     "prisma": "^6.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "ts-node": "^10.9.2"
   }
 }
