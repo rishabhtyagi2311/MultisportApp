@@ -49,44 +49,6 @@ router.post("/profileRegister", async(req, res) => {
 })
 
 
-router.get("/profileCheck/:id" , async(req, res) => {
-
-  
-    
-    const id = parseInt(req.params.id); 
-    console.log(id);
-    
-
-    if (isNaN(id)) {
-        res.status(400).json({ message: "Invalid user ID" });
-        return 
-    }
-
-    try {
-        const userExist = await client.footballProfile.findUnique({
-            where: {
-            userId: id,
-            },
-        });
-        console.log(userExist);
-        
-        if (userExist) {
-            res.status(200).json({check : true , userDetails : userExist});
-            return 
-        } else {
-            console.log("check negative ");
-            
-            res.status(200).json({ check: false });
-            return 
-        }
-    } 
-    catch (err) 
-    {
-        console.error("Error checking user profile:", err);
-        res.status(500).json({ message: "Internal Server Error" });
-        return 
-    }
-})
 
 router.post("/createTeam", async (req, res) => {
     const parsed = footballTeamCreate.safeParse(req.body);
@@ -168,5 +130,108 @@ router.get('/fetchPlayers', async (req, res) => {
       return 
     }
   });
+
+
+
+router.get('/myTeams', async (req, res) => {
+  const userId = parseInt(req.query.userId as string);
+
+  if (isNaN(userId)) {
+    res.status(400).json({ error: 'Invalid or missing userId in query' });
+    return 
+  }
+console.log(userId);
+
+  try {
+    // Fetch the user's football profile
+    const profile = await client.footballProfile.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+
+    
+
+    if (!profile) {
+        res.status(404).json({ error: 'Football profile not found' });
+      return 
+    }
+
+    const profileId = profile.id;
+
+    // Fetch teams where user is either creator or a member
+    const teams = await client.footballTeam.findMany({
+      where: {
+        OR: [
+          { createdById: profileId },
+          { members: { some: { footballProfileId: profileId } } },
+        ],
+      },
+      include: {
+        createdBy: {
+          include: {
+            user: true,
+          },
+        },
+        members: {
+          include: {
+            footballProfile: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        },
+      },
+    });
   
+    
+
+      res.json({ teams });
+      return 
+  } catch (error) {
+    console.error('Error fetching teams:', error);
+      res.status(500).json({ error: 'Internal server error' });
+      return 
+  }
+});
+
+
   
+router.get("/profileCheck/:id" , async(req, res) => {
+
+  
+    
+  const id = parseInt(req.params.id); 
+  console.log(id);
+  
+
+  if (isNaN(id)) {
+      res.status(400).json({ message: "Invalid user ID" });
+      return 
+  }
+
+  try {
+      const userExist = await client.footballProfile.findUnique({
+          where: {
+          userId: id,
+          },
+      });
+      console.log(userExist);
+      
+      if (userExist) {
+          res.status(200).json({check : true , userDetails : userExist});
+          return 
+      } else {
+          console.log("check negative ");
+          
+          res.status(200).json({ check: false });
+          return 
+      }
+  } 
+  catch (err) 
+  {
+      console.error("Error checking user profile:", err);
+      res.status(500).json({ message: "Internal Server Error" });
+      return 
+  }
+})

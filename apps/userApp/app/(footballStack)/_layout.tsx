@@ -3,6 +3,8 @@ import { Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 
 export default function FootballStackLayout() {
   return (

@@ -68,6 +68,18 @@ class FootballService {
       }
     }
 
+    async fetchMyTeams(userId: number) {
+      try {
+        const response = await axios.get(`${backendUrl}/api/v1/football/myTeams`, {
+          params: { userId }
+        });
+        return response?.data?.teams ?? [];
+      } catch (e) {
+        console.error("Error in fetchMyTeams:", e);
+        return [];
+      }
+    }
+
 }
 
 export const footballService = new FootballService();

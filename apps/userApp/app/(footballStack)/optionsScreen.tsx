@@ -31,7 +31,7 @@ export default function OptionsScreen() {
 
       {/* MY TEAMS */}
       <TouchableOpacity
-        // onPress={() => router.push('/(footballStack)/myTeams')}
+        onPress={() => router.push('/(footballStack)/myTeams')}
         className="bg-blue-950/85 rounded-xl p-5 mb-4 flex-row justify-between items-center shadow-md"
       >
         <Text className="text-slate-100 text-lg font-semibold">
