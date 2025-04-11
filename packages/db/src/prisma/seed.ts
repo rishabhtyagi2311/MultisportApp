@@ -33,6 +33,27 @@ const players = [
   { firstname: 'Raphaël', lastname: 'Varane', nickname: 'Rock' },
   { firstname: 'David', lastname: 'Alaba', nickname: 'Bossman' },
   { firstname: 'Thibaut', lastname: 'Courtois', nickname: 'TheWall' },
+  { firstname: 'Alisson', lastname: 'Becker', nickname: 'TheLung' },
+  { firstname: 'Gianluigi', lastname: 'Donnarumma', nickname: 'Gigio' },
+  { firstname: 'Jan', lastname: 'Oblak', nickname: 'TheMuro' },
+  { firstname: 'Marc-André', lastname: 'ter Stegen', nickname: 'TerStegen' },
+  { firstname: 'Jordan', lastname: 'Pickford', nickname: 'Pickers' },
+  { firstname: 'Thorgan', lastname: 'Hazard', nickname: 'Thorgan' },
+  { firstname: 'James', lastname: 'Maddison', nickname: 'MadDog' },
+  { firstname: 'Raheem', lastname: 'Sterling', nickname: 'Raheem' },
+  { firstname: 'Tammy', lastname: 'Abraham', nickname: 'BigTam' },
+  { firstname: 'Philippe', lastname: 'Coutinho', nickname: 'Cout' },
+  { firstname: 'Isco', lastname: 'Alarcón', nickname: 'Isco' },
+  { firstname: 'Franck', lastname: 'Kessié', nickname: 'Kessie' },
+  { firstname: 'Georginio', lastname: 'Wijnaldum', nickname: 'Wijnie' },
+  { firstname: 'NGolo', lastname: 'Kanté', nickname: 'Kante' },
+  { firstname: 'Wilfried', lastname: 'Zaha', nickname: 'Wilf' },
+  { firstname: 'Timo', lastname: 'Werner', nickname: 'Timo' },
+  { firstname: 'Christian', lastname: 'Pulisic', nickname: 'CFC' },
+  { firstname: 'Mason', lastname: 'Mount', nickname: 'Mase' },
+  { firstname: 'Declan', lastname: 'Rice', nickname: 'Ricey' },
+  { firstname: 'César', lastname: 'Azpilicueta', nickname: 'Azpi' },
+  { firstname: 'Benjamin', lastname: 'Mendy', nickname: 'Mendy' },
 ];
 
 const cities = [
@@ -56,8 +77,9 @@ function getRandomExp() {
 }
 
 async function main() {
-  for (let i = 0; i < players.length; i++) {
-    const player = players[i];
+  // Create 50 football players
+  for (let i = 0; i < 50; i++) {
+    const player = players[i % players.length]; // Repeat player data to reach 50 profiles
 
     const user = await prisma.userInfo.create({
       data: {
@@ -80,7 +102,51 @@ async function main() {
     });
   }
 
-  console.log('Seeded 30 football players with userInfo and footballProfile');
+  console.log('Seeded 50 football players with userInfo and footballProfile');
+
+  // Create teams
+  const createdTeams = [];
+  for (let i = 0; i < 5; i++) {  // Create 5 teams
+    const creatorProfile = await prisma.footballProfile.findFirst();  // Use the first profile for simplicity, can be customized
+    if(creatorProfile)
+    {
+      
+    const team = await prisma.footballTeam.create({
+      data: {
+        name: `Team ${i + 1}`,
+        location: getRandom(cities),
+        maxPlayers: 10,  // Max players per team
+        createdById: creatorProfile.id,
+      },
+    });
+
+    createdTeams.push(team);
+
+    // Assign 10 random players to this team
+    const playersForTeam = await prisma.footballProfile.findMany({
+      where: {
+        NOT: {
+          userId: creatorProfile.userId, // Prevent creator from being added again
+        },
+      },
+      take: 10,
+    });
+
+    for (const player of playersForTeam) {
+      await prisma.footballTeamMember.create({
+        data: {
+          footballProfileId: player.id,
+          footballTeamId: team.id,
+        },
+      });
+    }
+    }
+
+
+    
+  }
+
+  console.log('Seeded 5 teams with players');
 }
 
 main()

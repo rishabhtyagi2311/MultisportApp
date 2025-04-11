@@ -1,5 +1,5 @@
 import e, { Router } from "express";
-import { footballProfileRegister, footballTeamCreate } from "../types";
+import { footballProfileRegister, footballTeamCreate, createfootballMatchBaseSchema} from "../types";
 import client from "@multisport/db/client"
 
 export const router  =Router()
@@ -235,3 +235,41 @@ router.get("/profileCheck/:id" , async(req, res) => {
       return 
   }
 })
+
+
+
+router.get('/allTeams', async (req, res) => {
+  try {
+    const teams = await client.footballTeam.findMany({
+      include: {
+        members: {
+          include: {
+            footballProfile: true, // This will get the player profile info
+          },
+        },
+      },
+    });
+
+    // Format the response
+    const teamsWithPlayers = teams.map((team) => ({
+      id : team.id,
+      teamName: team.name,
+      location: team.location,
+      maxPlayers: team.maxPlayers,
+      players: team.members.map((member) => ({
+        id : member.footballProfile.id,
+        nickname: member.footballProfile.nickname,
+        role: member.footballProfile.role,
+        experience: member.footballProfile.experience,
+      })),
+    }));
+    console.log(teamsWithPlayers);
+    
+    res.json(teamsWithPlayers);
+    return 
+  } catch (error) {
+    console.error('Error fetching teams:', error);
+    res.status(500).json({ error: 'Internal server error' });
+    return 
+  }
+});

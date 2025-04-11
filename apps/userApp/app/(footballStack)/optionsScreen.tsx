@@ -53,7 +53,7 @@ export default function OptionsScreen() {
 
       {/* START MATCH */}
       <TouchableOpacity
-        // onPress={() => router.push('/(footballStack)/startMatch')}
+        onPress={() => router.push('/(footballStack)/startMatch')}
         className="bg-blue-950/85 rounded-xl p-5 mb-4 flex-row justify-between items-center shadow-md"
       >
         <Text className="text-slate-100 text-lg font-semibold">

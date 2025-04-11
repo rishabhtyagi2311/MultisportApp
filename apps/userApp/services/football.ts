@@ -80,6 +80,18 @@ class FootballService {
       }
     }
 
+    async fetchAllTeamsWithPlayers() {
+      try {
+        const response = await axios.get(`${backendUrl}/api/v1/football/allTeams`);
+        console.log(response.data);
+        
+        return response?.data ?? [];
+      } catch (e) {
+        console.error("Error in fetchAllTeamsWithPlayers:", e);
+        return [];
+      }
+    }
+
 }
 
 export const footballService = new FootballService();

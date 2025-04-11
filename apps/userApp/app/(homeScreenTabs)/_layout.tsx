@@ -57,7 +57,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="sports"
         options={{
-          title: 'Sports',
+          title: 'Sports & Activities',
         }}
       />
       <Tabs.Screen

@@ -27,3 +27,13 @@ export const footballTeamCreate = z.object({
     maxPlayers : z.number(),
     playerIds: z.array(z.number())
 })
+
+export const createfootballMatchBaseSchema = z.object({
+    location: z.string(),
+  playersPerTeam: z.number(),
+  allowedSubs: z.number(),
+  extraTime: z.boolean(),
+  homeTeamId: z.number(),
+  awayTeamId: z.number(),
+  referees: z.array(z.string()),
+  });
