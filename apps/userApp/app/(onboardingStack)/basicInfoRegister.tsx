@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -12,7 +12,15 @@ import {
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { ChevronDown, User, Mail, MapPin } from "lucide-react-native";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import Animated, {
+  FadeInDown, FlipInYRight, FlipOutYLeft,
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withSequence,
+  withTiming,
+  Easing,
+} from "react-native-reanimated";
 import { onBoardingService } from "@/services/onBoarding";
 import { useRouter } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -43,6 +51,8 @@ const ageOptions = Array.from({ length: 69 }, (_, i) => (12 + i).toString());
 export default function InfoRegisterScreen() {
   const [showCityOptions, setShowCityOptions] = useState(false);
   const [showAgeOptions, setShowAgeOptions] = useState(false);
+  const scale = useSharedValue(1);
+  const opacity = useSharedValue(0.5);
   const router = useRouter()
   const {
     control,
@@ -62,6 +72,33 @@ export default function InfoRegisterScreen() {
     },
   });
 
+  useEffect(() => {
+    scale.value = withRepeat(
+      withSequence(
+        withTiming(1.05, { duration: 800, easing: Easing.out(Easing.exp) }),
+        withTiming(1, { duration: 800, easing: Easing.out(Easing.exp) })
+      ),
+      -1,
+      true
+    );
+
+    opacity.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 800 }),
+        withTiming(0.8, { duration: 800 })
+      ),
+      -1,
+      true
+    );
+  })
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+    opacity: opacity.value,
+  }));
+
+
+
   const watchedCity = watch("city");
   const watchedAge = watch("age");
 
@@ -72,7 +109,7 @@ export default function InfoRegisterScreen() {
       data.city = data.customCity;
     }
 
-    const response   = await onBoardingService.basicInfoRegister({
+    const response = await onBoardingService.basicInfoRegister({
       firstname: data.firstName,
       lastname: data.lastName,
       username: data.username,
@@ -82,13 +119,12 @@ export default function InfoRegisterScreen() {
     });
 
     console.log(response);
-    if(response?.data.id) 
-      {
-        await AsyncStorage.setItem("user_id", (response.data.id).toString() )
-        router.replace('../(homeScreenTabs)')
-      }
- 
-  
+    if (response?.data.id) {
+      await AsyncStorage.setItem("user_id", (response.data.id).toString())
+      router.replace('../(homeScreenTabs)')
+    }
+
+
   };
 
   const renderInput = (
@@ -98,9 +134,10 @@ export default function InfoRegisterScreen() {
     rules: object = {},
     props: object = {}
   ) => (
-    <Animated.View entering={FadeInDown.delay(200)} className="mb-5">
-      <Text className="text-gray-900 font-bold mb-2">{label}</Text>
-      <View className="flex-row items-center bg-white rounded-xl border border-gray-300 h-14 px-4 shadow-sm">
+    <Animated.View entering={FadeInDown.delay(200)} className="m-2">
+
+      <Text className="text-white ml-4 mb-2 font-bold text-xl">{label}</Text>
+      <View className="flex-row items-center bg-black rounded-xl border border-gray-300 h-14 px-4 shadow-sm mb-6">
         <View className="mr-3">{icon}</View>
         <Controller
           control={control}
@@ -108,7 +145,7 @@ export default function InfoRegisterScreen() {
           rules={rules}
           render={({ field: { onChange, value } }) => (
             <TextInput
-              className="flex-1 text-gray-900 text-base"
+              className="flex-1 text-base text-white"
               placeholder={`Enter ${label}`}
               placeholderTextColor="#94A3B8"
               onChangeText={onChange}
@@ -126,133 +163,58 @@ export default function InfoRegisterScreen() {
     </Animated.View>
   );
 
+
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1"
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      className="flex-1 bg-black"
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView
-          className="flex-1 bg-gray-200"
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View className="px-6 pt-8 mt-16">
+        <View className="flex-1">
+          {/* Fixed background */}
+          
 
-            {/* First Name */}
-            {renderInput("firstName", "First Name", <User size={20} color="#64748B" />, {
-              required: "First name is required",
-            })}
-
-            {/* Last Name */}
-            {renderInput("lastName", "Last Name", <User size={20} color="#64748B" />, {
-              required: "Last name is required",
-            })}
-
-            {/* Age Dropdown */}
-            <Animated.View entering={FadeInDown.delay(400)} className="mb-5">
-              <Text className="text-gray-900 font-bold mb-2">Age</Text>
-              <TouchableOpacity
-                className="flex-row items-center bg-white rounded-xl border border-gray-300 h-14 px-4 shadow-sm justify-between"
-                onPress={() => setShowAgeOptions(!showAgeOptions)}
-              >
-                <Text className={`text-base ${watchedAge ? "text-gray-900" : "text-gray-400"}`}>
-                  {watchedAge || "Select your age"}
-                </Text>
-                <ChevronDown size={20} color="#64748B" />
-              </TouchableOpacity>
-
-              {/* Age Options */}
-              {showAgeOptions && (
-                <Animated.View
-                  entering={FadeInDown}
-                  className="bg-white rounded-xl border border-gray-300 mt-2 shadow-md max-h-60"
-                >
-                  <ScrollView className="max-h-60">
-                    {ageOptions.map((age) => (
-                      <TouchableOpacity
-                        key={age}
-                        onPress={() => {
-                          setValue("age", age);
-                          setShowAgeOptions(false);
-                        }}
-                        className="px-4 py-3 border-b border-gray-200"
-                      >
-                        <Text className="text-gray-800">{age}</Text>
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                </Animated.View>
-              )}
-            </Animated.View>
-
-            {/* City Dropdown */}
-            <Animated.View entering={FadeInDown.delay(400)} className="mb-5">
-              <Text className="text-gray-900 font-bold mb-2">City</Text>
-              <TouchableOpacity
-                className="flex-row items-center bg-white rounded-xl border border-gray-300 h-14 px-4 shadow-sm justify-between"
-                onPress={() => setShowCityOptions(!showCityOptions)}
-              >
-                <Text className={`text-base ${watchedCity ? "text-gray-900" : "text-gray-400"}`}>
-                  {watchedCity || "Select your city"}
-                </Text>
-                <ChevronDown size={20} color="#64748B" />
-              </TouchableOpacity>
-
-              {/* City Options */}
-              {showCityOptions && (
-                <Animated.View
-                  entering={FadeInDown}
-                  className="bg-white rounded-xl border border-gray-300 mt-2 shadow-md max-h-60"
-                >
-                  <ScrollView className="max-h-60">
-                    {indianCities.map((city) => (
-                      <TouchableOpacity
-                        key={city}
-                        onPress={() => {
-                          setValue("city", city);
-                          setShowCityOptions(false);
-                        }}
-                        className="px-4 py-3 border-b border-gray-200"
-                      >
-                        <Text className="text-gray-800">{city}</Text>
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                </Animated.View>
-              )}
-            </Animated.View>
-
-            {/* Custom City (if selected "Other") */}
-            {watchedCity === "Other" &&
-              renderInput("customCity", "Your City", <MapPin size={20} color="#64748B" />, {
-                required: "Please enter your city",
-              })}
-
-            {/* Username */}
-            {renderInput("username", "Username", <User size={20} color="#64748B" />, {
-              required: "Username is required",
-            })}
-
-            {/* Email */}
-            {renderInput("email", "Email", <Mail size={20} color="#64748B" />, {
-              required: "Email is required",
-              pattern: {
-                value: /^\S+@\S+\.\S+$/,
-                message: "Please enter a valid email",
-              },
-            }, { keyboardType: "email-address" })}
-
-            {/* Submit Button */}
-            <TouchableOpacity
-              className="bg-blue-600 h-14 rounded-xl flex items-center justify-center mt-4 shadow-lg"
-              onPress={handleSubmit(onSubmit)}
+          {/* Scrollable content */}
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}
+            keyboardShouldPersistTaps="handled"
+          >
+            <Animated.View
+              entering={FlipInYRight.duration(500)}
+              exiting={FlipOutYLeft.duration(500)}
+              className="w-11/12 bg-slate-500 rounded-2xl pt-4 pb-8 px-4 mb-36"
             >
-              <Text className="text-white text-lg font-semibold">Create Account</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
+              <View className="w-full items-center mt-6 px-4 mb-6">
+                <Animated.Text
+                  style={animatedStyle}
+                  className="text-white text-4xl font-extrabold text-center mb-10 italic"
+                >
+                  Create Your Profile
+                </Animated.Text>
+              </View>
+
+              {renderInput("firstName", "First Name", <User size={20} color="#64748B" />, {
+                required: "First name is required",
+              })}
+              {renderInput("lastName", "Last Name", <User size={20} color="#64748B" />, {
+                required: "Last name is required",
+              })}
+              {renderInput("email", "Email", <Mail size={20} color="#64748B" />, {
+                required: "Email is required",
+                pattern: {
+                  value: /^\S+@\S+\.\S+$/,
+                  message: "Please enter a valid email",
+                },
+              }, { keyboardType: "email-address" })}
+
+              {/* Add a Submit Button or more inputs here */}
+            </Animated.View>
+          </ScrollView>
+
+
+        </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
+
   );
 }

@@ -1,8 +1,6 @@
-import { createStackNavigator } from '@react-navigation/stack';
+import { Stack } from 'expo-router';
 import InfoRegisterScreen from './basicInfoRegister';
 
-
-const Stack = createStackNavigator();
 
 
 
@@ -11,9 +9,9 @@ export default function RootStacklayout()
   console.log("coming to onbarding");
   
     return (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="basicInfoRegister" component={InfoRegisterScreen}  />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="basicInfoRegister"   />
     
-        </Stack.Navigator>
+        </Stack>
       );
 }
