@@ -64,10 +64,6 @@ export default function InfoRegisterScreen() {
     defaultValues: {
       firstName: "",
       lastName: "",
-      age: "",
-      city: "",
-      customCity: "",
-      username: "",
       email: "",
     },
   });
@@ -104,25 +100,10 @@ export default function InfoRegisterScreen() {
 
   const onSubmit = async (data: FormData) => {
     console.log("Form Submitted:", data);
+    router.push("./basicInfoRegisterTwo")
 
-    if (data.customCity) {
-      data.city = data.customCity;
-    }
 
-    const response = await onBoardingService.basicInfoRegister({
-      firstname: data.firstName,
-      lastname: data.lastName,
-      username: data.username,
-      age: data.age,
-      email: data.email,
-      city: data.city,
-    });
-
-    console.log(response);
-    if (response?.data.id) {
-      await AsyncStorage.setItem("user_id", (response.data.id).toString())
-      router.replace('../(homeScreenTabs)')
-    }
+   
 
 
   };
@@ -137,7 +118,7 @@ export default function InfoRegisterScreen() {
     <Animated.View entering={FadeInDown.delay(200)} className="m-2">
 
       <Text className="text-white ml-4 mb-2 font-bold text-xl">{label}</Text>
-      <View className="flex-row items-center bg-black rounded-xl border border-gray-300 h-14 px-4 shadow-sm mb-6">
+      <View className="flex-row items-center bg-white rounded-xl border border-gray-300 h-14 px-4 shadow-sm mb-6">
         <View className="mr-3">{icon}</View>
         <Controller
           control={control}
@@ -145,7 +126,7 @@ export default function InfoRegisterScreen() {
           rules={rules}
           render={({ field: { onChange, value } }) => (
             <TextInput
-              className="flex-1 text-base text-white"
+              className="flex-1 text-base text-black"
               placeholder={`Enter ${label}`}
               placeholderTextColor="#94A3B8"
               onChangeText={onChange}
@@ -156,7 +137,7 @@ export default function InfoRegisterScreen() {
         />
       </View>
       {errors[name] && (
-        <Animated.Text entering={FadeInDown} className="text-red-500 text-sm mt-1">
+        <Animated.Text entering={FadeInDown} className="text-red-900 text-base font-bold ml-4 ">
           {errors[name]?.message as string}
         </Animated.Text>
       )}
@@ -181,8 +162,8 @@ export default function InfoRegisterScreen() {
           >
             <Animated.View
               entering={FlipInYRight.duration(500)}
-              exiting={FlipOutYLeft.duration(500)}
-              className="w-11/12 bg-slate-500 rounded-2xl pt-4 pb-8 px-4 mb-36"
+              exiting={FlipOutYLeft.duration(100)}
+              className="w-11/12 bg-slate-500 rounded-2xl pt-4 pb-8 px-4 mb-24"
             >
               <View className="w-full items-center mt-6 px-4 mb-6">
                 <Animated.Text
@@ -209,8 +190,23 @@ export default function InfoRegisterScreen() {
 
               {/* Add a Submit Button or more inputs here */}
             </Animated.View>
+
+            <View className="w-full flex flex-row justify-center">
+            {/* Submit Button */}
+            <TouchableOpacity
+              className="bg-slate-500 h-14 rounded-2xl flex items-center justify-center w-11/12"
+              onPress={handleSubmit(onSubmit)}
+            >
+              <Text className="text-white text-2xl font-bold italic">Proceed</Text>
+            </TouchableOpacity>
+          </View>
+
+
+
+
           </ScrollView>
 
+          
 
         </View>
       </TouchableWithoutFeedback>

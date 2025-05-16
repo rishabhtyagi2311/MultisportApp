@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router';
-import InfoRegisterScreen from './basicInfoRegister';
+import InfoRegisterScreen from './basicInfoRegisterOne';
 
 
 
@@ -10,7 +10,7 @@ export default function RootStacklayout()
   
     return (
         <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="basicInfoRegister"   />
+          <Stack.Screen name="basicInfoRegisterOne"   />
     
         </Stack>
       );
