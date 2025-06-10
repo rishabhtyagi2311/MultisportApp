@@ -9,6 +9,7 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  ImageBackground
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { ChevronDown, User, Mail, MapPin } from "lucide-react-native";
@@ -103,7 +104,7 @@ export default function InfoRegisterScreen() {
     router.push("./basicInfoRegisterTwo")
 
 
-   
+
 
 
   };
@@ -115,10 +116,10 @@ export default function InfoRegisterScreen() {
     rules: object = {},
     props: object = {}
   ) => (
-    <Animated.View entering={FadeInDown.delay(200)} className="m-2">
+    <Animated.View entering={FadeInDown.delay(200)} className="m-2 self-center">
 
-      <Text className="text-white ml-4 mb-2 font-bold text-xl">{label}</Text>
-      <View className="flex-row items-center bg-white rounded-xl border border-gray-300 h-14 px-4 shadow-sm mb-6">
+
+      <View className="flex-row items-center bg-white rounded-xl border border-black h-14 px-4 shadow-sm mb-6 w-11/12">
         <View className="mr-3">{icon}</View>
         <Controller
           control={control}
@@ -144,73 +145,73 @@ export default function InfoRegisterScreen() {
     </Animated.View>
   );
 
-
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      className="flex-1 bg-black"
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      className="flex-1"
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0} // adjust if needed
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View className="flex-1">
-          {/* Fixed background */}
-          
-
-          {/* Scrollable content */}
-          <ScrollView
-            contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}
-            keyboardShouldPersistTaps="handled"
+        <View className="flex-1 bg-white">
+          <ImageBackground
+            source={require('../../assets/images/coverImage.jpg')}
+            resizeMode="cover"
+            className="flex-1"
           >
-            <Animated.View
-              entering={FlipInYRight.duration(500)}
-              exiting={FlipOutYLeft.duration(100)}
-              className="w-11/12 bg-slate-500 rounded-2xl pt-4 pb-8 px-4 mb-24"
-            >
-              <View className="w-full items-center mt-6 px-4 mb-6">
-                <Animated.Text
-                  style={animatedStyle}
-                  className="text-white text-4xl font-extrabold text-center mb-10 italic"
+            <View className="flex-1 justify-end">
+              <View
+                className="bg-white border-black border-4"
+                style={{ height: "60%", borderTopRightRadius: 180 }}
+              >
+                <ScrollView
+                  contentContainerStyle={{ paddingBottom: 30 }}
+                  showsVerticalScrollIndicator={false}
+                  keyboardShouldPersistTaps="handled"
                 >
-                  Create Your Profile
-                </Animated.Text>
+                  <Animated.Text
+                    style={animatedStyle}
+                    className="text-black text-3xl font-extrabold  mt-8 mb-10 ml-12"
+                  >
+                    Get Started.
+                  </Animated.Text>
+
+                  <View className="px-2 flex ">
+                    
+                    {renderInput("firstName", "First Name", <User size={20} color="#64748B" />, {
+                      required: "First name is required",
+                    })}
+                    {renderInput("lastName", "Last Name", <User size={20} color="#64748B" />, {
+                      required: "Last name is required",
+                    })}
+                    {renderInput(
+                      "email",
+                      "Email",
+                      <Mail size={20} color="#64748B" />,
+                      {
+                        required: "Email is required",
+                        pattern: {
+                          value: /^\S+@\S+\.\S+$/,
+                          message: "Please enter a valid email",
+                        },
+                      },
+                      { keyboardType: "email-address" }
+                    )}
+                  </View>
+
+                  <View className="w-full flex items-center mt-6">
+                    <TouchableOpacity
+                      className="bg-black h-14 rounded-3xl flex items-center justify-center w-10/12"
+                      onPress={handleSubmit(onSubmit)}
+                    >
+                      <Text className="text-white text-2xl font-bold ">Proceed</Text>
+                    </TouchableOpacity>
+                  </View>
+                </ScrollView>
               </View>
-
-              {renderInput("firstName", "First Name", <User size={20} color="#64748B" />, {
-                required: "First name is required",
-              })}
-              {renderInput("lastName", "Last Name", <User size={20} color="#64748B" />, {
-                required: "Last name is required",
-              })}
-              {renderInput("email", "Email", <Mail size={20} color="#64748B" />, {
-                required: "Email is required",
-                pattern: {
-                  value: /^\S+@\S+\.\S+$/,
-                  message: "Please enter a valid email",
-                },
-              }, { keyboardType: "email-address" })}
-
-              {/* Add a Submit Button or more inputs here */}
-            </Animated.View>
-
-            <View className="w-full flex flex-row justify-center">
-            {/* Submit Button */}
-            <TouchableOpacity
-              className="bg-slate-500 h-14 rounded-2xl flex items-center justify-center w-11/12"
-              onPress={handleSubmit(onSubmit)}
-            >
-              <Text className="text-white text-2xl font-bold italic">Proceed</Text>
-            </TouchableOpacity>
-          </View>
-
-
-
-
-          </ScrollView>
-
-          
-
+            </View>
+          </ImageBackground>
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
-
   );
 }
