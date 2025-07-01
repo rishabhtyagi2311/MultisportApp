@@ -19,7 +19,7 @@ router.post("/basicInfo", async(req, res) => {
     try{
         const user = await client.userInfo.findFirst({
             where:{
-                username: parsedData.data.username
+                contact: parsedData.data.contact
             }
         })
         if(user)
@@ -29,19 +29,20 @@ router.post("/basicInfo", async(req, res) => {
         }
         const newUser  = await client.userInfo.create({
             data:{
-                username: parsedData.data.username,
+               
                 firstname: parsedData.data.firstname,
                 lastname : parsedData.data.lastname,
-                age : parsedData.data.age,
+                dob : parsedData.data.dob,
                 city : parsedData.data.city,
-                email : parsedData.data.email
+                email : parsedData.data.email,
+                contact: parsedData.data.contact
     
             }
         })
         if(newUser)
         {
             res.status(200).json({id: newUser.id, firstname: newUser.firstname, lastname: newUser.lastname,
-                username : newUser.username
+                
             })
             return
         }

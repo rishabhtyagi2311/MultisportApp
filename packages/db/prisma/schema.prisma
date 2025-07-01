@@ -11,10 +11,10 @@ model userInfo {
   id          Int             @id @default(autoincrement())
   firstname   String
   lastname    String
-  username    String          @unique
-  age         Int
+  email       String          @unique
+  dob         String
   city        String
-  email       String
+  contact     String          @unique
 
   footballProfile footballProfile?
 

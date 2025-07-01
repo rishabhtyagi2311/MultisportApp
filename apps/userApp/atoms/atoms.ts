@@ -34,8 +34,28 @@ export interface footballTeamWithRelations {
     };
   }[];
 }
+export interface signUpModel{
+  firstname:string;
+  lastname: string;
+  email:string;
+  contact:string;
+  dob : string;
+  city:string;
+}
 
-  
+export const signUpAtom = atom<signUpModel>({
+  key: 'signUpAtom',
+  default : {
+    firstname :'',
+    lastname: '',
+    email :'',
+    contact:'',
+    dob :'',
+    city :''
+  }
+
+})
+
 export const footballteamAtom = atom<TeamFormState>({
   key: 'teamFormAtom',
   default: {

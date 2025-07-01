@@ -22,13 +22,13 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import { onBoardingService } from "@/services/onBoarding";
+
 import { useRouter } from "expo-router";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { countryCodes, CountryCodeWithCities} from '@/data/countryCodeswithCities';
 
-const ageOptions = Array.from({ length: 69 }, (_, i) => (12 + i).toString());
-
+import { useRecoilState } from "recoil";
+import { signUpAtom } from "@/atoms/atoms";
 type FormData = {
   phone: string;
 };
@@ -41,6 +41,7 @@ export default function InfoRegisterScreen() {
   const scale = useSharedValue(1);
   const opacity = useSharedValue(0.5);
   const router = useRouter();
+  const [values, setValues] = useRecoilState(signUpAtom)
 
   const {
     control,
@@ -79,7 +80,16 @@ export default function InfoRegisterScreen() {
   }));
 
   const onSubmit = async (data: FormData) => {
-    console.log("Form Submitted:", data);
+
+    setValues({
+      firstname : values.firstname,
+      lastname : values.lastname,
+      email : values.email,
+      contact : data.phone,
+      city:'',
+      dob: ''
+
+    })
     router.push("./basicInfoRegisterThree");
   };
 

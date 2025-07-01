@@ -14,6 +14,9 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { useRouter } from "expo-router";
 
+import { useRecoilState } from "recoil";
+import { signUpAtom } from "@/atoms/atoms";
+import { onBoardingService } from "@/services/onBoarding";
 type FormData = {
   city: string;
   dob: string;
@@ -21,7 +24,7 @@ type FormData = {
 
 export default function InfoRegisterScreen() {
   const router = useRouter();
-
+  const [values, setValues] = useRecoilState(signUpAtom)
   const {
     control,
     handleSubmit,
@@ -34,9 +37,24 @@ export default function InfoRegisterScreen() {
   });
 
   const onSubmit = (data: FormData) => {
-    console.log("Form Data:", data);
+      const onSubmit = async (data: FormData) => {
+
+    setValues({
+      firstname : values.firstname,
+      lastname : values.lastname,
+      email : values.email,
+      contact : values.contact,
+      city:data.city,
+      dob: data.dob
+
+    })
+    console.log(values);
+    onBoardingService.basicInfoRegister({
+      values
+    })
     router.push("./basicInfoRegisterThree");
-  };
+    };
+  }
 
   return (
     <KeyboardAvoidingView

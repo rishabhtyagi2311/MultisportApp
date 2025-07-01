@@ -22,36 +22,24 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import { onBoardingService } from "@/services/onBoarding";
+
 import { useRouter } from "expo-router";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSetRecoilState } from "recoil";
+import { signUpAtom } from "@/atoms/atoms";
+
 
 type FormData = {
   firstName: string;
   lastName: string;
-  age: string;
-  city: string;
-  customCity?: string;
-  username: string;
   email: string;
 };
 
-const indianCities = [
-  "Mumbai", "Delhi", "Bangalore", "Hyderabad", "Chennai", "Kolkata", "Pune",
-  "Ahmedabad", "Jaipur", "Lucknow", "Surat", "Indore", "Bhopal", "Nagpur",
-  "Visakhapatnam", "Patna", "Vadodara", "Ludhiana", "Agra", "Nashik", "Faridabad",
-  "Meerut", "Rajkot", "Varanasi", "Srinagar", "Aurangabad", "Dhanbad", "Amritsar",
-  "Allahabad", "Ranchi", "Gwalior", "Jodhpur", "Raipur", "Kota", "Guwahati",
-  "Chandigarh", "Thiruvananthapuram", "Mysore", "Salem", "Jalandhar", "Tiruchirappalli",
-  "Dehradun", "Other"
-];
 
-const ageOptions = Array.from({ length: 69 }, (_, i) => (12 + i).toString());
 
 
 export default function InfoRegisterScreen() {
-  const [showCityOptions, setShowCityOptions] = useState(false);
-  const [showAgeOptions, setShowAgeOptions] = useState(false);
+  
+  const setAuthDetails = useSetRecoilState(signUpAtom)
   const scale = useSharedValue(1);
   const opacity = useSharedValue(0.5);
   const router = useRouter()
@@ -96,12 +84,20 @@ export default function InfoRegisterScreen() {
 
 
 
-  const watchedCity = watch("city");
-  const watchedAge = watch("age");
+ 
 
   const onSubmit = async (data: FormData) => {
-    console.log("Form Submitted:", data);
-    router.push("./basicInfoRegisterTwo")
+
+
+   setAuthDetails({
+    firstname : data.firstName,
+    lastname : data.lastName,
+    email : data.email,
+    city :'',
+    dob :'',
+    contact :''
+  })
+  router.push("./basicInfoRegisterTwo")
 
 
 
